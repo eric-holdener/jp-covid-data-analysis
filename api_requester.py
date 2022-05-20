@@ -55,16 +55,6 @@ def filterData(df, selection):
       preDf, duringDf, postDf, totalDf = covidWinterFilters(df)
 
   return preDf, duringDf, postDf, totalDf  
-
-def getDataInfo(df):
-  xMin = min(df.index)
-  xMax = max(df.index)
-
-  dataColumn = df['fully_vaccinated']
-  yMin = min(dataColumn)
-  yMax = max(dataColumn)
-
-  return xMin, xMax, yMin, yMax
   
 def plotData(preDf, duringDf, postDf, totalDf, column):
   fig, ax = plt.subplots(2, 2, figsize=(9, 7), sharex=False, sharey=True)
@@ -123,16 +113,6 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
 
   plt.show()
 
-def inspectData(df):
-  # print(monthDf.head())
-  print(df.head())
-  print(df.info())
-  print(df['demographic_value'])
-
-def doMath(df):
-  # code for math analysis here
-  print("do math")
-
 def hmongFilters(df):
   during_hmong_dates = df.loc['2021-11-01':'2021-12-10']
   pre_hmong_dates = df.loc['2021-09-19':'2021-10-31']
@@ -189,14 +169,13 @@ def covidWinterFilters(df):
 
   return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
 
+def inspectData(df):
+  # print(monthDf.head())
+  print(df.head())
+  print(df.info())
+  print(df['demographic_value'])
 
-# getData()
-# convertToCsv()
 df = readData()
 preDf, duringDf, postDf, totalDf = filterData(df, 3)
-# xMin, xMax, yMin, yMax = getDataInfo(filtered_df)
-# doMath(filtered_df)
 column = 'fully_vaccinated'
 plotData(preDf, duringDf, postDf, totalDf, column)
-
-# inspectData(df)
