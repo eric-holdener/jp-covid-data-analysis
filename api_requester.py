@@ -51,6 +51,8 @@ def filterData(df, selection):
       preDf, duringDf, postDf, totalDf = hmongFilters(df)
     case 2:
       preDf, duringDf, postDf, totalDf = covidKiddosFilters(df)
+    case 3:
+      preDf, duringDf, postDf, totalDf = covidWinterFilters(df)
 
   return preDf, duringDf, postDf, totalDf  
 
@@ -64,14 +66,14 @@ def getDataInfo(df):
 
   return xMin, xMax, yMin, yMax
   
-def plotData(preDf, duringDf, postDf, totalDf):
+def plotData(preDf, duringDf, postDf, totalDf, column):
   fig, ax = plt.subplots(2, 2, figsize=(9, 7), sharex=False, sharey=True)
 
   # Pre Campaign
-  ax[0,0].plot(preDf.index, preDf['fully_vaccinated'])
+  ax[0,0].plot(preDf.index, preDf[column])
 
   preDf.index = preDf.index.map(datetime.date.toordinal)
-  slope, y0, r, p, stderr = stats.linregress(preDf.index, preDf['fully_vaccinated'])
+  slope, y0, r, p, stderr = stats.linregress(preDf.index, preDf[column])
 
   pre_x_endpoints = pd.DataFrame([preDf.index[0], preDf.index[-1]], index = [0, 1])
   pre_y_endpoints = y0 + slope * pre_x_endpoints
@@ -81,10 +83,10 @@ def plotData(preDf, duringDf, postDf, totalDf):
   ax[0,0].set_title('Weeks leading up to campaign', fontsize=12)
 
   # During Campaign
-  ax[0,1].plot(duringDf.index, duringDf['fully_vaccinated'])
+  ax[0,1].plot(duringDf.index, duringDf[column])
 
   duringDf.index = duringDf.index.map(datetime.date.toordinal)
-  slope, y0, r, p, stderr = stats.linregress(duringDf.index, duringDf['fully_vaccinated'])
+  slope, y0, r, p, stderr = stats.linregress(duringDf.index, duringDf[column])
 
   during_x_endpoints = pd.DataFrame([duringDf.index[0], duringDf.index[-1]], index = [0, 1])
   during_y_endpoints = y0 + slope * during_x_endpoints
@@ -94,10 +96,10 @@ def plotData(preDf, duringDf, postDf, totalDf):
   ax[0,1].set_title('Weeks during the campaign', fontsize=12)
 
   # Post Campaign
-  ax[1,0].plot(postDf.index, postDf['fully_vaccinated'])
+  ax[1,0].plot(postDf.index, postDf[column])
 
   postDf.index = postDf.index.map(datetime.date.toordinal)
-  slope, y0, r, p, stderr = stats.linregress(postDf.index, postDf['fully_vaccinated'])
+  slope, y0, r, p, stderr = stats.linregress(postDf.index, postDf[column])
 
   post_x_endpoints = pd.DataFrame([postDf.index[0], postDf.index[-1]], index = [0, 1])
   post_y_endpoints = y0 + slope * post_x_endpoints
@@ -107,10 +109,10 @@ def plotData(preDf, duringDf, postDf, totalDf):
   ax[1,0].set_title('Weeks after the campaign', fontsize=12)
 
   # Total Graph
-  ax[1,1].plot(totalDf.index, totalDf['fully_vaccinated'])
+  ax[1,1].plot(totalDf.index, totalDf[column])
 
   totalDf.index = totalDf.index.map(datetime.date.toordinal)
-  slope, y0, r, p, stderr = stats.linregress(totalDf.index, totalDf['fully_vaccinated'])
+  slope, y0, r, p, stderr = stats.linregress(totalDf.index, totalDf[column])
 
   total_x_endpoints = pd.DataFrame([totalDf.index[0], totalDf.index[-1]], index = [0, 1])
   total_y_endpoints = y0 + slope * total_x_endpoints
@@ -167,13 +169,34 @@ def covidKiddosFilters(df):
 
   return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
 
+def covidWinterFilters(df):
+  during_winter_dates = df.loc['2022-01-01':'2022-02-28']
+  pre_winter_dates = df.loc['2021-11-01':'2021-12-31']
+  after_winter_dates = df.loc['2022-03-01':'2022-04-30']
+  total_winter_dates = df.loc['2021-11-01':'2022-04-30']
+
+  filter_list = ['5-11', '12-17']
+
+  is_under_18_pre = pre_winter_dates['demographic_value'].isin(filter_list)
+  is_under_18_during = during_winter_dates['demographic_value'].isin(filter_list)
+  is_under_18_after = after_winter_dates['demographic_value'].isin(filter_list)
+  is_under_18_total = total_winter_dates['demographic_value'].isin(filter_list)
+
+  filtered_df_pre = pre_winter_dates[is_under_18_pre]
+  filtered_df_during = during_winter_dates[is_under_18_during]
+  filtered_df_after = after_winter_dates[is_under_18_after]
+  filtered_df_total = total_winter_dates[is_under_18_total]
+
+  return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
+
 
 # getData()
 # convertToCsv()
 df = readData()
-preDf, duringDf, postDf, totalDf = filterData(df, 1)
+preDf, duringDf, postDf, totalDf = filterData(df, 3)
 # xMin, xMax, yMin, yMax = getDataInfo(filtered_df)
 # doMath(filtered_df)
-plotData(preDf, duringDf, postDf, totalDf)
+column = 'fully_vaccinated'
+plotData(preDf, duringDf, postDf, totalDf, column)
 
 # inspectData(df)
