@@ -72,6 +72,8 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
   ax[0,0].plot(pre_x_endpoints.iloc[0:2].values, pre_y_endpoints.iloc[0:2].values, c='r')
   ax[0,0].set_title('Weeks leading up to campaign', fontsize=12)
 
+  print(f'Pre Slope = {slope}')
+
   # During Campaign
   ax[0,1].plot(duringDf.index, duringDf[column])
 
@@ -84,6 +86,8 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
 
   ax[0,1].plot(during_x_endpoints.iloc[0:2].values, during_y_endpoints.iloc[0:2].values, c='r')
   ax[0,1].set_title('Weeks during the campaign', fontsize=12)
+
+  print(f'During Slope = {slope}')
 
   # Post Campaign
   ax[1,0].plot(postDf.index, postDf[column])
@@ -98,6 +102,8 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
   ax[1,0].plot(post_x_endpoints.iloc[0:2].values, post_y_endpoints.iloc[0:2].values, c='r')
   ax[1,0].set_title('Weeks after the campaign', fontsize=12)
 
+  print(f'After Slope = {slope}')
+
   # Total Graph
   ax[1,1].plot(totalDf.index, totalDf[column])
 
@@ -110,6 +116,8 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
 
   ax[1,1].plot(total_x_endpoints.iloc[0:2].values, total_y_endpoints.iloc[0:2].values, c='r')
   ax[1,1].set_title('Total timeline', fontsize=12)
+
+  print(f'Total Slope = {slope}')
 
   plt.show()
 
@@ -124,12 +132,22 @@ def hmongFilters(df):
   is_asian_after = after_hmong_dates['demographic_value'] == 'Asian'
   is_asian_total = total_dates['demographic_value'] == 'Asian'
 
-  filtered_df_pre_hmong = pre_hmong_dates[is_asian_pre]
-  filtered_df_during_hmong = during_hmong_dates[is_asian_during]
-  filtered_df_after_hmong = after_hmong_dates[is_asian_after]
+  filtered_df_pre = pre_hmong_dates[is_asian_pre]
+  filtered_df_during = during_hmong_dates[is_asian_during]
+  filtered_df_after = after_hmong_dates[is_asian_after]
   filtered_df_total = total_dates[is_asian_total]
 
-  return filtered_df_pre_hmong, filtered_df_during_hmong, filtered_df_after_hmong, filtered_df_total
+  pre_average = dfData(filtered_df_pre)
+  during_average = dfData(filtered_df_during)
+  after_average = dfData(filtered_df_after)
+  total_average = dfData(filtered_df_total)
+
+  print(f'Pre Avg = {pre_average}')
+  print(f'During Avg = {during_average}')
+  print(f'After Avg = {after_average}')
+  print(f'Total Avg = {total_average}')
+
+  return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
 
 def covidKiddosFilters(df):
   during_kiddos_dates = df.loc['2021-12-08':'2021-12-31']
@@ -146,6 +164,16 @@ def covidKiddosFilters(df):
   filtered_df_during = during_kiddos_dates[is_5_11_during]
   filtered_df_after = after_kiddos_dates[is_5_11_after]
   filtered_df_total = total_kiddos_dates[is_5_11_total]
+
+  pre_average = dfData(filtered_df_pre)
+  during_average = dfData(filtered_df_during)
+  after_average = dfData(filtered_df_after)
+  total_average = dfData(filtered_df_total)
+
+  print(f'Pre Avg = {pre_average}')
+  print(f'During Avg = {during_average}')
+  print(f'After Avg = {after_average}')
+  print(f'Total Avg = {total_average}')
 
   return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
 
@@ -167,6 +195,16 @@ def covidWinterFilters(df):
   filtered_df_after = after_winter_dates[is_under_18_after]
   filtered_df_total = total_winter_dates[is_under_18_total]
 
+  pre_average = dfData(filtered_df_pre)
+  during_average = dfData(filtered_df_during)
+  after_average = dfData(filtered_df_after)
+  total_average = dfData(filtered_df_total)
+
+  print(f'Pre Avg = {pre_average}')
+  print(f'During Avg = {during_average}')
+  print(f'After Avg = {after_average}')
+  print(f'Total Avg = {total_average}')
+
   return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
 
 def inspectData(df):
@@ -174,6 +212,10 @@ def inspectData(df):
   print(df.head())
   print(df.info())
   print(df['demographic_value'])
+
+def dfData(df):
+  fully_vaccinated_average = df['fully_vaccinated'].mean()
+  return fully_vaccinated_average
 
 df = readData()
 preDf, duringDf, postDf, totalDf = filterData(df, 3)
