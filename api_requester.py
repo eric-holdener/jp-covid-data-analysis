@@ -119,6 +119,13 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
 
   print(f'Total Slope = {slope}')
 
+  ax[0,0].tick_params(axis="x", rotation=45, labelsize=8)
+  ax[1,0].tick_params(axis="x", rotation=45, labelsize=8)
+  ax[0,1].tick_params(axis="x", rotation=45, labelsize=8)
+  ax[1,1].tick_params(axis="x", rotation=45, labelsize=8)
+
+  fig.tight_layout()
+
   plt.show()
 
 def hmongFilters(df):
@@ -207,6 +214,66 @@ def covidWinterFilters(df):
 
   return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
 
+def covidVaccineFilters(df):
+  during_dates = df.loc['2022-01-01':'2022-02-28']
+  pre_dates = df.loc['2021-11-01':'2021-12-31']
+  after_dates = df.loc['2022-03-01':'2022-04-30']
+  total_dates = df.loc['2021-11-01':'2022-04-30']
+
+  filter_list = ['5-11', '12-17']
+
+  is_under_18_pre = pre_dates['demographic_value'].isin(filter_list)
+  is_under_18_during = during_dates['demographic_value'].isin(filter_list)
+  is_under_18_after = after_dates['demographic_value'].isin(filter_list)
+  is_under_18_total = total_dates['demographic_value'].isin(filter_list)
+
+  filtered_df_pre = pre_dates[is_under_18_pre]
+  filtered_df_during = during_dates[is_under_18_during]
+  filtered_df_after = after_dates[is_under_18_after]
+  filtered_df_total = total_dates[is_under_18_total]
+
+  pre_average = dfData(filtered_df_pre)
+  during_average = dfData(filtered_df_during)
+  after_average = dfData(filtered_df_after)
+  total_average = dfData(filtered_df_total)
+
+  print(f'Pre Avg = {pre_average}')
+  print(f'During Avg = {during_average}')
+  print(f'After Avg = {after_average}')
+  print(f'Total Avg = {total_average}')
+
+  return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
+
+def covidEvolutionFilters(df):
+  during_dates = df.loc['2021-09-01':'2021-11-30']
+  pre_dates = df.loc['2021-06-01':'2021-08-31']
+  after_dates = df.loc['2021-12-01':'2022-02-28']
+  total_dates = df.loc['2021-06-01':'2022-02-28']
+
+  filter_list = ['5-11', '12-17']
+
+  is_under_18_pre = pre_dates['demographic_value'].isin(filter_list)
+  is_under_18_during = during_dates['demographic_value'].isin(filter_list)
+  is_under_18_after = after_dates['demographic_value'].isin(filter_list)
+  is_under_18_total = total_dates['demographic_value'].isin(filter_list)
+
+  filtered_df_pre = pre_dates[is_under_18_pre]
+  filtered_df_during = during_dates[is_under_18_during]
+  filtered_df_after = after_dates[is_under_18_after]
+  filtered_df_total = total_dates[is_under_18_total]
+
+  pre_average = dfData(filtered_df_pre)
+  during_average = dfData(filtered_df_during)
+  after_average = dfData(filtered_df_after)
+  total_average = dfData(filtered_df_total)
+
+  print(f'Pre Avg = {pre_average}')
+  print(f'During Avg = {during_average}')
+  print(f'After Avg = {after_average}')
+  print(f'Total Avg = {total_average}')
+
+  return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
+
 def inspectData(df):
   # print(monthDf.head())
   print(df.head())
@@ -218,6 +285,6 @@ def dfData(df):
   return fully_vaccinated_average
 
 df = readData()
-preDf, duringDf, postDf, totalDf = filterData(df, 3)
+preDf, duringDf, postDf, totalDf = filterData(df, 2)
 column = 'fully_vaccinated'
 plotData(preDf, duringDf, postDf, totalDf, column)
