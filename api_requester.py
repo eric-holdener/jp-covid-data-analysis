@@ -53,6 +53,10 @@ def filterData(df, selection):
       preDf, duringDf, postDf, totalDf = covidKiddosFilters(df)
     case 3:
       preDf, duringDf, postDf, totalDf = covidWinterFilters(df)
+    case 4:
+      preDf, duringDf, postDf, totalDf = covidEvolutionFilters(df)
+    case 5:
+      preDf, duringDf, postDf, totalDf = covidVaccineFilters(df)
 
   return preDf, duringDf, postDf, totalDf  
   
@@ -215,22 +219,15 @@ def covidWinterFilters(df):
   return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
 
 def covidVaccineFilters(df):
-  during_dates = df.loc['2022-01-01':'2022-02-28']
-  pre_dates = df.loc['2021-11-01':'2021-12-31']
-  after_dates = df.loc['2022-03-01':'2022-04-30']
-  total_dates = df.loc['2021-11-01':'2022-04-30']
+  during_dates = df.loc['2021-05-01':'2021-07-31']
+  pre_dates = df.loc['2021-02-01':'2021-04-30']
+  after_dates = df.loc['2021-08-01':'2021-11-30']
+  total_dates = df.loc['2021-02-01':'2021-11-30']
 
-  filter_list = ['5-11', '12-17']
-
-  is_under_18_pre = pre_dates['demographic_value'].isin(filter_list)
-  is_under_18_during = during_dates['demographic_value'].isin(filter_list)
-  is_under_18_after = after_dates['demographic_value'].isin(filter_list)
-  is_under_18_total = total_dates['demographic_value'].isin(filter_list)
-
-  filtered_df_pre = pre_dates[is_under_18_pre]
-  filtered_df_during = during_dates[is_under_18_during]
-  filtered_df_after = after_dates[is_under_18_after]
-  filtered_df_total = total_dates[is_under_18_total]
+  filtered_df_pre = pre_dates
+  filtered_df_during = during_dates
+  filtered_df_after = after_dates
+  filtered_df_total = total_dates
 
   pre_average = dfData(filtered_df_pre)
   during_average = dfData(filtered_df_during)
@@ -250,17 +247,10 @@ def covidEvolutionFilters(df):
   after_dates = df.loc['2021-12-01':'2022-02-28']
   total_dates = df.loc['2021-06-01':'2022-02-28']
 
-  filter_list = ['5-11', '12-17']
-
-  is_under_18_pre = pre_dates['demographic_value'].isin(filter_list)
-  is_under_18_during = during_dates['demographic_value'].isin(filter_list)
-  is_under_18_after = after_dates['demographic_value'].isin(filter_list)
-  is_under_18_total = total_dates['demographic_value'].isin(filter_list)
-
-  filtered_df_pre = pre_dates[is_under_18_pre]
-  filtered_df_during = during_dates[is_under_18_during]
-  filtered_df_after = after_dates[is_under_18_after]
-  filtered_df_total = total_dates[is_under_18_total]
+  filtered_df_pre = pre_dates
+  filtered_df_during = during_dates
+  filtered_df_after = after_dates
+  filtered_df_total = total_dates
 
   pre_average = dfData(filtered_df_pre)
   during_average = dfData(filtered_df_during)
@@ -285,6 +275,6 @@ def dfData(df):
   return fully_vaccinated_average
 
 df = readData()
-preDf, duringDf, postDf, totalDf = filterData(df, 2)
+preDf, duringDf, postDf, totalDf = filterData(df, 5)
 column = 'fully_vaccinated'
 plotData(preDf, duringDf, postDf, totalDf, column)
