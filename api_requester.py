@@ -52,17 +52,26 @@ def filterData(df, selection):
   # 3: covid winter
   # 4: covid evolution
   # 5: covid vaccine
+  # 6: hmong new years inverse
+  # 7: covid kiddos inverse
+  # 8: covid winter inverse
   match selection:
     case 1:
-      preDf, duringDf, postDf, totalDf = processData(df, '2021-09-19', '2021-10-31', '2021-11-01', '2021-12-10', '2021-12-11', '2022-01-22', ['Asian'])
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-09-19', '2021-10-31', '2021-11-01', '2021-12-10', '2021-12-11', '2022-01-22', False, ['Asian'])
     case 2:
-      preDf, duringDf, postDf, totalDf = processData(df, '2021-11-17', '2021-12-07', '2021-12-08', '2021-12-31', '2022-01-01', '2022-01-22', ['5-11'])
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-11-17', '2021-12-07', '2021-12-08', '2021-12-31', '2022-01-01', '2022-01-22', False, ['5-11'])
     case 3:
-      preDf, duringDf, postDf, totalDf = processData(df, '2021-11-01', '2021-12-31', '2022-01-01', '2022-02-28', '2022-03-01', '2022-04-30', ['5-11', '12-17'])
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-11-01', '2021-12-31', '2022-01-01', '2022-02-28', '2022-03-01', '2022-04-30', False, ['5-11', '12-17'])
     case 4:
-      preDf, duringDf, postDf, totalDf = processData(df, '2021-06-01', '2021-08-31', '2021-09-01', '2021-11-30', '2021-12-01', '2022-02-28')
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-06-01', '2021-08-31', '2021-09-01', '2021-11-30', '2021-12-01', '2022-02-28', False)
     case 5:
-      preDf, duringDf, postDf, totalDf = processData(df, '2021-02-01', '2021-04-30', '2021-05-01', '2021-07-31', '2021-08-01', '2021-11-30')
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-02-01', '2021-04-30', '2021-05-01', '2021-07-31', '2021-08-01', '2021-11-30', False)
+    case 6:
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-09-19', '2021-10-31', '2021-11-01', '2021-12-10', '2021-12-11', '2022-01-22', True, ['Asian'])
+    case 7:
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-11-17', '2021-12-07', '2021-12-08', '2021-12-31', '2022-01-01', '2022-01-22', True, ['5-11'])
+    case 8:
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-11-01', '2021-12-31', '2022-01-01', '2022-02-28', '2022-03-01', '2022-04-30', True, ['5-11', '12-17'])
 
   return preDf, duringDf, postDf, totalDf  
   
@@ -138,17 +147,24 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
 
   plt.show()
 
-def processData(df, start_pre, end_pre, start_during, end_during, start_after, end_after, filter=None):
+def processData(df, start_pre, end_pre, start_during, end_during, start_after, end_after, inverse, filter=None):
   during_dates = df.loc[start_during:end_during]
   pre_dates = df.loc[start_pre:end_pre]
   after_dates = df.loc[start_after:end_after]
   total_dates = df.loc[start_pre:end_after]
 
   if filter != None:
-    filter_pre = pre_dates['demographic_value'].isin(filter) 
-    filter_during = during_dates['demographic_value'].isin(filter)
-    filter_after = after_dates['demographic_value'].isin(filter)
-    filter_total = total_dates['demographic_value'].isin(filter)
+    if inverse == False:
+      filter_pre = pre_dates['demographic_value'].isin(filter) 
+      filter_during = during_dates['demographic_value'].isin(filter)
+      filter_after = after_dates['demographic_value'].isin(filter)
+      filter_total = total_dates['demographic_value'].isin(filter)
+
+    else:
+      filter_pre = pre_dates[~pre_dates['demographic_value'].isin(filter)] 
+      filter_during = during_dates[~during_dates['demographic_value'].isin(filter)]
+      filter_after = after_dates[~after_dates['demographic_value'].isin(filter)]
+      filter_total = total_dates[~total_dates['demographic_value'].isin(filter)]
 
     filtered_df_pre = pre_dates[filter_pre]
     filtered_df_during = during_dates[filter_during]
