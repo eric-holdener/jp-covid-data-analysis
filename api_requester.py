@@ -92,6 +92,8 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
   ax[0,0].set_title('Weeks leading up to campaign', fontsize=12)
 
   print(f'Pre Slope = {slope}')
+  print(f'Pre R2 = {r**2}')
+  print(f'Pre STD = {stderr}')
 
   # During Campaign
   ax[0,1].plot(duringDf.index, duringDf[column])
@@ -107,6 +109,8 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
   ax[0,1].set_title('Weeks during the campaign', fontsize=12)
 
   print(f'During Slope = {slope}')
+  print(f'During R2 = {r**2}')
+  print(f'During STD = {stderr}')
 
   # Post Campaign
   ax[1,0].plot(postDf.index, postDf[column])
@@ -122,7 +126,9 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
   ax[1,0].set_title('Weeks after the campaign', fontsize=12)
 
   print(f'After Slope = {slope}')
-
+  print(f'After R2 = {r**2}')
+  print(f'After STD = {stderr}')
+  
   # Total Graph
   ax[1,1].plot(totalDf.index, totalDf[column])
 
@@ -137,6 +143,8 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
   ax[1,1].set_title('Total timeline', fontsize=12)
 
   print(f'Total Slope = {slope}')
+  print(f'Total R2 = {r**2}')
+  print(f'Total STD = {stderr}')
 
   ax[0,0].tick_params(axis="x", rotation=45, labelsize=8)
   ax[1,0].tick_params(axis="x", rotation=45, labelsize=8)
@@ -205,6 +213,6 @@ def dfData(df):
   return fully_vaccinated_average
 
 df = readData()
-preDf, duringDf, postDf, totalDf = filterData(df, 6)
+preDf, duringDf, postDf, totalDf = filterData(df, 8)
 column = 'fully_vaccinated'
 plotData(preDf, duringDf, postDf, totalDf, column)
