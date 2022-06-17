@@ -159,6 +159,11 @@ def processData(df, start_pre, end_pre, start_during, end_during, start_after, e
       filter_during = during_dates['demographic_value'].isin(filter)
       filter_after = after_dates['demographic_value'].isin(filter)
       filter_total = total_dates['demographic_value'].isin(filter)
+      
+      filtered_df_pre = pre_dates[filter_pre]
+      filtered_df_during = during_dates[filter_during]
+      filtered_df_after = after_dates[filter_after]
+      filtered_df_total = total_dates[filter_total]
 
     else:
       filter_pre = pre_dates[~pre_dates['demographic_value'].isin(filter)] 
@@ -166,10 +171,11 @@ def processData(df, start_pre, end_pre, start_during, end_during, start_after, e
       filter_after = after_dates[~after_dates['demographic_value'].isin(filter)]
       filter_total = total_dates[~total_dates['demographic_value'].isin(filter)]
 
-    filtered_df_pre = pre_dates[filter_pre]
-    filtered_df_during = during_dates[filter_during]
-    filtered_df_after = after_dates[filter_after]
-    filtered_df_total = total_dates[filter_total]
+      filtered_df_pre = filter_pre
+      filtered_df_during = filter_during
+      filtered_df_after = filter_after
+      filtered_df_total = filter_total
+
   else:
     filtered_df_pre = pre_dates
     filtered_df_during = during_dates
@@ -199,6 +205,6 @@ def dfData(df):
   return fully_vaccinated_average
 
 df = readData()
-preDf, duringDf, postDf, totalDf = filterData(df, 3)
+preDf, duringDf, postDf, totalDf = filterData(df, 6)
 column = 'fully_vaccinated'
 plotData(preDf, duringDf, postDf, totalDf, column)
