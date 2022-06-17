@@ -46,17 +46,23 @@ def readData():
   return df
 
 def filterData(df, selection):
+  # selection numbers are as follows:
+  # 1: hmong new years
+  # 2: covid kiddos
+  # 3: covid winter
+  # 4: covid evolution
+  # 5: covid vaccine
   match selection:
     case 1:
-      preDf, duringDf, postDf, totalDf = hmongFilters(df)
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-09-19', '2021-10-31', '2021-11-01', '2021-12-10', '2021-12-11', '2022-01-22', ['Asian'])
     case 2:
-      preDf, duringDf, postDf, totalDf = covidKiddosFilters(df)
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-11-17', '2021-12-07', '2021-12-08', '2021-12-31', '2022-01-01', '2022-01-22', ['5-11'])
     case 3:
-      preDf, duringDf, postDf, totalDf = covidWinterFilters(df)
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-11-01', '2021-12-31', '2022-01-01', '2022-02-28', '2022-03-01', '2022-04-30', ['5-11', '12-17'])
     case 4:
-      preDf, duringDf, postDf, totalDf = covidEvolutionFilters(df)
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-06-01', '2021-08-31', '2021-09-01', '2021-11-30', '2021-12-01', '2022-02-28')
     case 5:
-      preDf, duringDf, postDf, totalDf = covidVaccineFilters(df)
+      preDf, duringDf, postDf, totalDf = processData(df, '2021-02-01', '2021-04-30', '2021-05-01', '2021-07-31', '2021-08-01', '2021-11-30')
 
   return preDf, duringDf, postDf, totalDf  
   
@@ -132,125 +138,27 @@ def plotData(preDf, duringDf, postDf, totalDf, column):
 
   plt.show()
 
-def hmongFilters(df):
-  during_hmong_dates = df.loc['2021-11-01':'2021-12-10']
-  pre_hmong_dates = df.loc['2021-09-19':'2021-10-31']
-  after_hmong_dates = df.loc['2021-12-11':'2022-01-22']
-  total_dates = df.loc['2021-09-19':'2022-01-22']
+def processData(df, start_pre, end_pre, start_during, end_during, start_after, end_after, filter=None):
+  during_dates = df.loc[start_during:end_during]
+  pre_dates = df.loc[start_pre:end_pre]
+  after_dates = df.loc[start_after:end_after]
+  total_dates = df.loc[start_pre:end_after]
 
-  is_asian_pre = pre_hmong_dates['demographic_value'] == 'Asian'
-  is_asian_during = during_hmong_dates['demographic_value'] == 'Asian'
-  is_asian_after = after_hmong_dates['demographic_value'] == 'Asian'
-  is_asian_total = total_dates['demographic_value'] == 'Asian'
+  if filter != None:
+    filter_pre = pre_dates['demographic_value'].isin(filter) 
+    filter_during = during_dates['demographic_value'].isin(filter)
+    filter_after = after_dates['demographic_value'].isin(filter)
+    filter_total = total_dates['demographic_value'].isin(filter)
 
-  filtered_df_pre = pre_hmong_dates[is_asian_pre]
-  filtered_df_during = during_hmong_dates[is_asian_during]
-  filtered_df_after = after_hmong_dates[is_asian_after]
-  filtered_df_total = total_dates[is_asian_total]
-
-  pre_average = dfData(filtered_df_pre)
-  during_average = dfData(filtered_df_during)
-  after_average = dfData(filtered_df_after)
-  total_average = dfData(filtered_df_total)
-
-  print(f'Pre Avg = {pre_average}')
-  print(f'During Avg = {during_average}')
-  print(f'After Avg = {after_average}')
-  print(f'Total Avg = {total_average}')
-
-  return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
-
-def covidKiddosFilters(df):
-  during_kiddos_dates = df.loc['2021-12-08':'2021-12-31']
-  pre_kiddos_dates = df.loc['2021-11-17':'2021-12-07']
-  after_kiddos_dates = df.loc['2022-01-01':'2022-01-22']
-  total_kiddos_dates = df.loc['2021-11-17':'2022-01-22']
-
-  is_5_11_pre = pre_kiddos_dates['demographic_value'] == '5-11'
-  is_5_11_during = during_kiddos_dates['demographic_value'] == '5-11'
-  is_5_11_after = after_kiddos_dates['demographic_value'] == '5-11'
-  is_5_11_total = total_kiddos_dates['demographic_value'] == '5-11'
-
-  filtered_df_pre = pre_kiddos_dates[is_5_11_pre]
-  filtered_df_during = during_kiddos_dates[is_5_11_during]
-  filtered_df_after = after_kiddos_dates[is_5_11_after]
-  filtered_df_total = total_kiddos_dates[is_5_11_total]
-
-  pre_average = dfData(filtered_df_pre)
-  during_average = dfData(filtered_df_during)
-  after_average = dfData(filtered_df_after)
-  total_average = dfData(filtered_df_total)
-
-  print(f'Pre Avg = {pre_average}')
-  print(f'During Avg = {during_average}')
-  print(f'After Avg = {after_average}')
-  print(f'Total Avg = {total_average}')
-
-  return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
-
-def covidWinterFilters(df):
-  during_winter_dates = df.loc['2022-01-01':'2022-02-28']
-  pre_winter_dates = df.loc['2021-11-01':'2021-12-31']
-  after_winter_dates = df.loc['2022-03-01':'2022-04-30']
-  total_winter_dates = df.loc['2021-11-01':'2022-04-30']
-
-  filter_list = ['5-11', '12-17']
-
-  is_under_18_pre = pre_winter_dates['demographic_value'].isin(filter_list)
-  is_under_18_during = during_winter_dates['demographic_value'].isin(filter_list)
-  is_under_18_after = after_winter_dates['demographic_value'].isin(filter_list)
-  is_under_18_total = total_winter_dates['demographic_value'].isin(filter_list)
-
-  filtered_df_pre = pre_winter_dates[is_under_18_pre]
-  filtered_df_during = during_winter_dates[is_under_18_during]
-  filtered_df_after = after_winter_dates[is_under_18_after]
-  filtered_df_total = total_winter_dates[is_under_18_total]
-
-  pre_average = dfData(filtered_df_pre)
-  during_average = dfData(filtered_df_during)
-  after_average = dfData(filtered_df_after)
-  total_average = dfData(filtered_df_total)
-
-  print(f'Pre Avg = {pre_average}')
-  print(f'During Avg = {during_average}')
-  print(f'After Avg = {after_average}')
-  print(f'Total Avg = {total_average}')
-
-  return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
-
-def covidVaccineFilters(df):
-  during_dates = df.loc['2021-05-01':'2021-07-31']
-  pre_dates = df.loc['2021-02-01':'2021-04-30']
-  after_dates = df.loc['2021-08-01':'2021-11-30']
-  total_dates = df.loc['2021-02-01':'2021-11-30']
-
-  filtered_df_pre = pre_dates
-  filtered_df_during = during_dates
-  filtered_df_after = after_dates
-  filtered_df_total = total_dates
-
-  pre_average = dfData(filtered_df_pre)
-  during_average = dfData(filtered_df_during)
-  after_average = dfData(filtered_df_after)
-  total_average = dfData(filtered_df_total)
-
-  print(f'Pre Avg = {pre_average}')
-  print(f'During Avg = {during_average}')
-  print(f'After Avg = {after_average}')
-  print(f'Total Avg = {total_average}')
-
-  return filtered_df_pre, filtered_df_during, filtered_df_after, filtered_df_total
-
-def covidEvolutionFilters(df):
-  during_dates = df.loc['2021-09-01':'2021-11-30']
-  pre_dates = df.loc['2021-06-01':'2021-08-31']
-  after_dates = df.loc['2021-12-01':'2022-02-28']
-  total_dates = df.loc['2021-06-01':'2022-02-28']
-
-  filtered_df_pre = pre_dates
-  filtered_df_during = during_dates
-  filtered_df_after = after_dates
-  filtered_df_total = total_dates
+    filtered_df_pre = pre_dates[filter_pre]
+    filtered_df_during = during_dates[filter_during]
+    filtered_df_after = after_dates[filter_after]
+    filtered_df_total = total_dates[filter_total]
+  else:
+    filtered_df_pre = pre_dates
+    filtered_df_during = during_dates
+    filtered_df_after = after_dates
+    filtered_df_total = total_dates
 
   pre_average = dfData(filtered_df_pre)
   during_average = dfData(filtered_df_during)
@@ -275,6 +183,6 @@ def dfData(df):
   return fully_vaccinated_average
 
 df = readData()
-preDf, duringDf, postDf, totalDf = filterData(df, 5)
+preDf, duringDf, postDf, totalDf = filterData(df, 3)
 column = 'fully_vaccinated'
 plotData(preDf, duringDf, postDf, totalDf, column)
